@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 # Setups up the moonlight-qt repo for a RP5 
 # This is the user moonlight service file to auto start moonlight on power on 
@@ -14,6 +14,20 @@ QMAKE=qmake
 VERSION=release
 
 INSTALL_LOC="$HOME/.local/bin"
+
+new_dir() {
+    # If the directory does not exist, create it 
+    if [[ ! -d $1 ]]; then
+        mkdir -p $1
+    fi
+}
+
+new_file() {
+    # if the file does not exist, create it  
+    if [[ ! -f $1 ]]; then
+        touch $1
+    fi
+}
 
 
 
@@ -44,15 +58,30 @@ git submodule update --init --recursive
 $QMAKE moonlight-qt.pro
 make $VERSION 
 
-if [[ ! -d "${INSTALL_LOC}" ]]; then
-    mkdir -p "${INSTALL_LOC}"
-fi
+#if [[ ! -d "${INSTALL_LOC}" ]]; then
+#    mkdir -p "${INSTALL_LOC}"
+#fi
+#if [[ ! -f "$HOME/.bashrc" ]]; then
+#    touch $HOME/.bashrc
+#fi
 
-if [[ ! -f "$HOME/.bashrc" ]]; then
-    touch $HOME/.bashrc
-fi
+new_dir "${INSTALL_LOC}"
+new_file "$HOME/.bashrc"
 
 # If we don't see moonlight-qt, update bashrc to point here
 if ! echo $PATH | tr ':' '\n' | grep -q "moonlight-qt"; then
     echo "export PATH=${CWD}/moonlight-qt/app:\$PATH" >> $HOME/.bashrc
 fi
+
+# We need to create the moonlight.service file that systemd
+# can use so that we always boot into moonlight off the bat
+echo -e "[Unit]
+Description=moonlight service\n
+[Service]
+Type=simple
+ExecStart=${CWD}/moonlight-qt/app/moonlight\n
+[Install]
+WantedBy=default.target" > moonlight.service
+
+# Move the moonlight.service to the user config
+new_dir "$HOME/.config/systemd/user" && cp moonlight.service "$HOME/.config/systemd/user"
