@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 set -ex
 
 # Setups up the moonlight-qt repo for a RP5 
@@ -57,13 +56,6 @@ pushd moonlight-qt/
 git submodule update --init --recursive
 $QMAKE moonlight-qt.pro
 make $VERSION 
-
-#if [[ ! -d "${INSTALL_LOC}" ]]; then
-#    mkdir -p "${INSTALL_LOC}"
-#fi
-#if [[ ! -f "$HOME/.bashrc" ]]; then
-#    touch $HOME/.bashrc
-#fi
 
 new_dir "${INSTALL_LOC}"
 new_file "$HOME/.bashrc"
