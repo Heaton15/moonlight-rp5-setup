@@ -77,3 +77,7 @@ WantedBy=default.target" > moonlight.service
 
 # Move the moonlight.service to the user config
 new_dir "$HOME/.config/systemd/user" && cp moonlight.service "$HOME/.config/systemd/user"
+
+
+# Setup the systemd service
+# systemctl --user enable moonlight.service
