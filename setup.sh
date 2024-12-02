@@ -6,13 +6,17 @@ set -ex
 # ~/.config/systemd/user/moonlight.service
 
 
-MOONLIGHT_QT="https://github.com/moonlight-stream/moonlight-qt.git"
+MOONLIGHT_GIT="https://github.com/moonlight-stream/moonlight-qt.git"
+MOONLIGHT="moonlight-qt"
+
+if [[ ! -d $MOONLIGHT ]]; then
+    git clone $MOONLIGHT_GIT
+fi
+
 REQS=(libegl1-mesa-dev libgl1-mesa-dev libopus-dev libsdl2-dev libsdl2-ttf-dev libssl-dev libavcodec-dev libavformat-dev libswscale-dev libva-dev libvdpau-dev libxkbcommon-dev wayland-protocols libdrm-dev)
 QT_DEPS=(qtbase5-dev qt5-qmake qtdeclarative5-dev qtquickcontrols2-5-dev qml-module-qtquick-controls2 qml-module-qtquick-layouts qml-module-qtquick-window2 qml-module-qtquick2 qtwayland5)
 QMAKE=qmake
 VERSION=release
-
-INSTALL_LOC="$HOME/.local/bin"
 
 new_dir() {
     # If the directory does not exist, create it 
@@ -27,8 +31,6 @@ new_file() {
         touch $1
     fi
 }
-
-
 
 if [[ -n "${QT6}" ]]; then
     QMAKE=qmake6
@@ -57,7 +59,6 @@ git submodule update --init --recursive
 $QMAKE moonlight-qt.pro
 make $VERSION 
 
-new_dir "${INSTALL_LOC}"
 new_file "$HOME/.bashrc"
 
 # If we don't see moonlight-qt, update bashrc to point here
@@ -80,4 +81,5 @@ new_dir "$HOME/.config/systemd/user" && cp moonlight.service "$HOME/.config/syst
 
 
 # Setup the systemd service
-# systemctl --user enable moonlight.service
+systemctl --user enable moonlight.service
+systemctl --user start moonlight.service
