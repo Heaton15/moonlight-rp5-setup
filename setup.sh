@@ -15,6 +15,7 @@ fi
 
 REQS=(libegl1-mesa-dev libgl1-mesa-dev libopus-dev libsdl2-dev libsdl2-ttf-dev libssl-dev libavcodec-dev libavformat-dev libswscale-dev libva-dev libvdpau-dev libxkbcommon-dev wayland-protocols libdrm-dev)
 QT_DEPS=(qtbase5-dev qt5-qmake qtdeclarative5-dev qtquickcontrols2-5-dev qml-module-qtquick-controls2 qml-module-qtquick-layouts qml-module-qtquick-window2 qml-module-qtquick2 qtwayland5)
+EXTRA_PKGS=(raspi-config)
 QMAKE=qmake
 VERSION=release
 
@@ -31,6 +32,8 @@ new_file() {
         touch $1
     fi
 }
+
+sudo apt install ${EXTRA_PKGS}
 
 if [[ -n "${QT6}" ]]; then
     QMAKE=qmake6
