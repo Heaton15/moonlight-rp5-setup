@@ -9,6 +9,7 @@ help:
 clean:
 	rm -rf moonlight-qt moonlight.service
 	pushd xone && sudo ./uninstall.sh && popd
+	rm -rf xone
 
 install:
 	bash ./setup.sh
